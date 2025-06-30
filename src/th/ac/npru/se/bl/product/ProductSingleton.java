@@ -2,94 +2,151 @@ package th.ac.npru.se.bl.product;
 
 import java.sql.*;
 
-public class ProductSingleton {
-	private static ProductSingleton instance = null;
-	private String product_id;
-	private String product_name;
-	private int product_price;
-	private ProductSingleton() {
-		
-	}
-	public static ProductSingleton getInstance(){
-		if(instance == null) {
-			instance = new ProductSingleton();
-		}
-		return instance;
-	}
-	
-	public void showProduct() {
-		System.out.println("Product_id " + product_id + "product_name " + product_name + "product_price " + product_price);
-	}
-	
-	public void setProduct(String p_id, String p_name, int p_price) {
-		this.product_id = p_id;
-		this.product_name = p_name;
-		this.product_price = p_price;
-	}
-	public String getProductId() {
-		return product_id;
-	}
+/**
+ * The {@code ProductSingleton} class implements a singleton pattern for managing product data.
+ * It provides methods to set product details, show the product, insert product into database,
+ * and fetch product name by ID from the database.
+ * <p>
+ * This class assumes a MySQL database with a table named {@code Product}
+ * with fields matching {@code p_id}, {@code p_name}, and {@code p_price}.
+ * </p>
+ * 
+ * @author 
+ */
+public class ProductSingleton implements Manageble {
 
-	public String getProductName() {
-		return product_name;
-	}
+    // Singleton instance
+    private static ProductSingleton instance = null;
+    
+    // Product attributes
+    private String product_id;
+    private String product_name;
+    private int product_price;
 
-	public int getProductPrice() {
-		return product_price;
-	}
-	
-	public void insertProduct() {
-		Connection myConn = null;
-		Statement myStmt = null;
+    /**
+     * Private constructor to prevent external instantiation.
+     */
+    private ProductSingleton() {}
 
-		try {
-			// 1. Get a connection to database
-			myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/testling", "root" , "");
-			
-			System.out.println("Database connection successful!\n");
-			
-			// 2. Create a statement
-			myStmt = myConn.createStatement();
-			
-			// 3. Execute SQL query
-			String sql = "INSERT INTO Product " +
-	                   "VALUES ('"+this.product_id+"','"+this.product_name+"',"+this.product_price+")";
-			myStmt.executeUpdate(sql);
+    /**
+     * Gets the singleton instance of {@code ProductSingleton}.
+     *
+     * @return the singleton instance
+     */
+    public static ProductSingleton getInstance() {
+        if (instance == null) {
+            instance = new ProductSingleton();
+        }
+        return instance;
+    }
 
-		}
-		catch (Exception exc) {
-			exc.printStackTrace();
-		}
-	}
+    /**
+     * Displays the product information to the console.
+     */
+    public void showProduct() {
+        System.out.println("Product_id " + product_id + " product_name " + product_name + " product_price " + product_price);
+    }
 
-	public String getProductName(String pid) {
-		Connection myConn = null;
-		Statement myStmt = null;
-		ResultSet myRs = null;
-		String productName="";
-		try {
-			// 1. Get a connection to database
-			myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/testling", "root" , "");
-			
-			System.out.println("Database connection successful!\n");
-			
-			// 2. Create a statement
-			myStmt = myConn.createStatement();
-			
-			// 3. Execute SQL query
-			myRs = myStmt.executeQuery("select * from product where p_id='"+pid+"'");
-			
-			// 4. Process the result set
-			while (myRs.next()) {
-				productName = myRs.getString("p_name");
-			}
-			System.out.println(productName);
-			
-		}
-		catch (Exception exc) {
-			exc.printStackTrace();
-		}
-		return productName;
-	}
+    /**
+     * Sets the product details.
+     *
+     * @param p_id    the product ID
+     * @param p_name  the product name
+     * @param p_price the product price
+     */
+    public void setProduct(String p_id, String p_name, int p_price) {
+        this.product_id = p_id;
+        this.product_name = p_name;
+        this.product_price = p_price;
+    }
 
+    /**
+     * Gets the product ID.
+     *
+     * @return the product ID
+     */
+    public String getProductId() {
+        return product_id;
+    }
+
+    /**
+     * Gets the product name.
+     *
+     * @return the product name
+     */
+    public String getProductName() {
+        return product_name;
+    }
+
+    /**
+     * Gets the product price.
+     *
+     * @return the product price
+     */
+    public int getProductPrice() {
+        return product_price;
+    }
+
+    /**
+     * Inserts the current product into the database.
+     * Connects to a MySQL database named {@code testing} using root credentials.
+     * Assumes the {@code Product} table exists with appropriate columns.
+     */
+    public void insertProduct() {
+        Connection myConn = null;
+        Statement myStmt = null;
+
+        try {
+            myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/testing", "root", "");
+            System.out.println("Database connection successful!\n");
+
+            myStmt = myConn.createStatement();
+            String sql = "INSERT INTO Product VALUES ('" + this.product_id + "','" + this.product_name + "'," + this.product_price + ")";
+            myStmt.executeUpdate(sql);
+        } catch (Exception exc) {
+            exc.printStackTrace();
+        }
+    }
+
+    /**
+     * Retrieves the product name for a given product ID from the database.
+     *
+     * @param pid the product ID
+     * @return the product name associated with the given ID, or an empty string if not found
+     */
+    public String getProductName(String pid) {
+        Connection myConn = null;
+        Statement myStmt = null;
+        ResultSet myRs = null;
+        String productName = "";
+
+        try {
+            myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/testing", "root", "");
+            System.out.println("Database connection successful!\n");
+
+            myStmt = myConn.createStatement();
+            myRs = myStmt.executeQuery("SELECT * FROM product WHERE p_id='" + pid + "'");
+
+            while (myRs.next()) {
+                productName = myRs.getString("p_name");
+            }
+            System.out.println(productName);
+
+        } catch (Exception exc) {
+            exc.printStackTrace();
+        }
+
+        return productName;
+    }
+
+    /**
+     * Deletes a product by its ID.
+     * This implementation currently always returns false and is not implemented.
+     *
+     * @param id the product ID
+     * @return false (not implemented)
+     */
+    public boolean deleteById(int id) {
+        return false;
+    }
 }

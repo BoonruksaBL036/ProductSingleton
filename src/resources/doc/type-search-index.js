@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"th.ac.npru.se.bl.product","l":"Manageble"},{"p":"th.ac.npru.se.bl.product","l":"ProductSingleton"}];updateSearchResults();
